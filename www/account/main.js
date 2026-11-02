@@ -1,7 +1,7 @@
 const formUsername = document.getElementById("form-change-username");
 const inputUsername = document.getElementById("change-username");
 const btnUsernameChange = document.getElementById("btn-username-change");
-const btnLogout = document.getElementById("logout");
+const btnLogout = document.getElementById("btn-logout");
 const currentUsername = document.getElementById("current-username");
 
 import { supabase } from "../supabase.js"
