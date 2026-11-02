@@ -14,7 +14,7 @@ if (user) {
   console.log("logged in");
   window.location.href = "../account";
 } else {
-  console.log("not logged in")
+  // console.log("not logged in")
 }
 
 // Form Button onClick functions
@@ -28,6 +28,7 @@ formLogin.addEventListener("submit", async (e) => {
   });
   if (error) {
     console.error(error);
+    alert("Login failed")
   } else {
     console.log(data);
     window.location.href = "../account";

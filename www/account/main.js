@@ -22,6 +22,7 @@ btnLogout.addEventListener("click", async () => {
 
   if (error) {
       console.error("Logout failed: ", error)
+      alert(`Logout failed: ${error}`)
   } else {
       console.log("Logging Out...")
       window.location.href = "../index.html";

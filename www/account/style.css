@@ -9,9 +9,15 @@ html {
 }
 
 .title-bar {
+	position: relative;
 	background-color: black;
 	margin: 16px;
 	padding: 16px;
+}
+
+#btn-logout {
+	position: absolute;
+	top: 50%;
 }
 
 h1 {
@@ -33,16 +39,31 @@ div.container {
 	flex: 1 1 auto;
 }
 
+div.square {
+	aspect-ratio: 1 / 1;
+}
+
 form.change-username {
     display: flex;
-    justify-content: flex;
+    justify-content: flex; 
     align-items: center;
     gap: 8px;
 }
 
+#container-avatar {
+	aspect-ratio: 1 / 1;
+	flex: 1;
+	min-width: 100px;
+}
+
+#container-settings {
+	flex: 2;
+	max-height: 100px;
+}
+
 img.avatar {
-	aspect-ratio: 1/1;
-	max-width: 30vw;
+	aspect-ratio: 1 / 1;
+	width: 100%;
 }
 
 div.format {
