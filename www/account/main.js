@@ -3,6 +3,7 @@ const inputUsername = document.getElementById("change-username");
 const btnUsernameChange = document.getElementById("btn-username-change");
 const btnLogout = document.getElementById("btn-logout");
 const currentUsername = document.getElementById("current-username");
+const imgAvatar = document.getElementById("img-avatar");
 
 import { supabase } from "../supabase.js"
 
@@ -19,13 +20,13 @@ updateUsername();
 // Logs out user on button click
 btnLogout.addEventListener("click", async () => {
   const { error }  = await supabase.auth.signOut();
-
+  
   if (error) {
-      console.error("Logout failed: ", error)
-      alert(`Logout failed: ${error}`)
+    console.error("Logout failed: ", error)
+    alert(`Logout failed: ${error}`)
   } else {
-      console.log("Logging Out...")
-      window.location.href = "../index.html";
+    console.log("Logging Out...")
+    window.location.href = "../index.html";
   } 
 });
 
@@ -52,5 +53,6 @@ async function updateUsername() {
   } else {
     console.log(data)
     currentUsername.innerText = data[0].username;
+    imgAvatar.src = `https://api.dicebear.com/7.x/identicon/svg?seed=${data[0].username}`
   }
 }
