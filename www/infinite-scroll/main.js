@@ -1,3 +1,5 @@
+import { supabase } from "../supabase.js";
+
 const container = document.getElementById("container");
 const scoreBox = document.getElementById("score-box")
 
@@ -10,8 +12,41 @@ const POIs = {
     63360: "A full mile! I'm impressed"
 }
 
+const { data: {user} } = await supabase.auth.getUser();
 let distance = 0;
 let score = parseInt(localStorage.getItem("score")) || 0;
+
+async function main() {
+    // Get the stored score if the user is logged in
+    if (user) {
+        scoreBox.innerHTML = "Fetching Score...";
+        const { data, error } = await supabase
+            .from("scroller-score")
+            .select("score")
+            .eq("id", user.id)
+            .maybeSingle();
+        if (data && typeof data.score === "number") {
+            score = data.score;
+        }
+    }
+
+    // Initializes chunks to fill twice the entire height of the window 
+    do {
+    AddChunk();
+    } while (2 * document.documentElement.clientHeight > document.documentElement.scrollHeight);
+    UpdateScoreDisplay();
+
+    // Adds chunks if the user scrolls close to the bottom of the page
+    window.addEventListener("scroll", () => {
+        if (
+            document.documentElement.scrollTop +
+            (2 * document.documentElement.clientHeight) >=
+            document.documentElement.scrollHeight
+        ) {
+            AddChunk();
+        }
+    });
+}
 
 // Loads the infinite elements as the user scrolls
 function AddChunk() {
@@ -28,11 +63,11 @@ function AddChunk() {
         if ((Math.random() * 4096) > 4095) {
             block.classList.add("shiny", "clickable");
             console.log("shiny");
-            block.addEventListener("click", () => {
+            block.addEventListener("click", async () => {
                 if (block.classList.contains("clickable")) {
                     block.classList.remove("clickable")
-                    score++;
-                    UpdateScore();
+                    await IncrementScore();
+                    UpdateScoreDisplay();
                 }
             });
         }
@@ -42,24 +77,27 @@ function AddChunk() {
 }
 
 // Increases the user's score 
-function UpdateScore() {
+function UpdateScoreDisplay() {
     scoreBox.innerHTML = `Score: ${score}`;
     localStorage.setItem("score", score);
 }
 
-// Initializes chunks to fill twice the entire height of the window 
-do {
- AddChunk();
-} while (2 * document.documentElement.clientHeight > document.documentElement.scrollHeight);
-UpdateScore();
+async function IncrementScore() {
+    if (!user) {
+        score++;
+    } else {
+        // Run supabase function to increment score if a user is logged in
+        const { data: newScore, error } = await supabase.rpc("scroller_increment_score", {
+            user_id: user.id,
+        });
 
-// Adds chunks if the user scrolls close to the bottom of the page
-window.addEventListener("scroll", () => {
-    if (
-        document.documentElement.scrollTop +
-        (2 * document.documentElement.clientHeight) >=
-        document.documentElement.scrollHeight
-    ) {
-        AddChunk();
+        if (error) {
+            console.error("Failed to increment score:", error.message);
+            score++;
+        } else {
+            score = newScore;
+        }
     }
-});
+}
+
+main();
